@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>DigiWed Dashboard — Aswin & Athira</title>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5ede0;--bg2:#ece0cc;--bg3:#e2d4bb;
+  --dark:#1a0f0a;--dark2:#2e1810;
+  --gold:#b8902a;--gold2:#c9a96e;--gold3:#e8c990;
+  --maroon:#8b1a1a;--maroon2:#6b1010;
+  --cream:#faf4ec;--muted:#8a7060;
+  --card:rgba(255,255,255,.7);--border:rgba(184,144,42,.2);
+}
+body{background:var(--bg);color:var(--dark);font-family:'Cormorant Garamond',serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--dark2);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:100}
+#loginScreen.gone{display:none}
+.login-logo{font-family:'Pinyon Script',cursive;font-size:72px;color:var(--cream);margin-bottom:4px;line-height:1}
+.login-sub{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.4em;color:var(--gold2);margin-bottom:40px}
+.login-card{background:rgba(255,255,255,.06);border:1px solid rgba(201,169,110,.2);border-radius:16px;padding:28px 24px;width:100%;max-width:320px}
+.login-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:var(--gold2);margin-bottom:10px;display:block;text-align:left}
+.login-input{width:100%;padding:13px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(201,169,110,.25);border-radius:8px;font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--cream);outline:none;margin-bottom:16px;letter-spacing:.1em}
+.login-input::placeholder{color:rgba(201,169,110,.3)}
+.login-input:focus{border-color:var(--gold2)}
+.login-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),#8b6a18);border:none;border-radius:8px;font-family:'Cinzel',serif;letter-spacing:.3em;font-size:10px;color:var(--dark);cursor:pointer;font-weight:600}
+.login-err{color:#e74c3c;font-size:13px;font-style:italic;margin-top:10px;display:none}
+
+/* MAIN */
+#main{display:none;padding-bottom:40px}
+#main.show{display:block}
+
+/* HEADER */
+.dash-header{background:linear-gradient(135deg,var(--dark2),var(--dark));padding:24px 20px 20px;text-align:center;position:relative}
+.dash-couple{font-family:'Pinyon Script',cursive;font-size:42px;color:var(--cream);line-height:1}
+.dash-title{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.38em;color:var(--gold2);margin-top:6px;opacity:.8}
+.dash-back{position:absolute;top:20px;left:16px;background:rgba(255,255,255,.08);border:1px solid rgba(201,169,110,.2);border-radius:8px;padding:8px 14px;font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.2em;color:var(--gold2);cursor:pointer;text-decoration:none}
+
+/* LINK GENERATOR */
+.link-section{background:var(--card);border:1px solid var(--border);border-radius:16px;margin:16px;padding:22px 18px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.sec-title{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.32em;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:"";flex:1;height:1px;background:var(--border)}
+
+/* NAME INPUT */
+.name-row{display:flex;gap:10px;margin-bottom:14px}
+.name-input{flex:1;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.6);font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--dark);outline:none;transition:border-color .2s}
+.name-input:focus{border-color:var(--gold)}
+.name-input::placeholder{color:var(--muted)}
+
+/* EVENT TABS */
+.event-tabs-label{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.25em;color:var(--muted);margin-bottom:10px}
+.event-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.ev-tab{padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.15em;color:var(--muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.ev-tab.active{background:linear-gradient(135deg,var(--maroon),var(--maroon2));color:var(--gold3);border-color:var(--maroon)}
+.ev-tab .ev-letter{width:18px;height:18px;border-radius:50%;background:rgba(184,144,42,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--gold);font-weight:600}
+.ev-tab.active .ev-letter{background:rgba(255,255,255,.2);color:var(--gold3)}
+.ev-all-btn{width:100%;padding:10px;border:1px solid var(--gold);border-radius:8px;background:transparent;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.22em;color:var(--gold);cursor:pointer;margin-bottom:14px;transition:all .2s}
+.ev-all-btn.active{background:var(--gold);color:var(--dark)}
+
+/* LINK PREVIEW */
+.link-preview{background:rgba(0,0,0,.04);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--muted);word-break:break-all;margin-bottom:14px;min-height:48px;line-height:1.5}
+.link-preview span{color:var(--gold);font-weight:500}
+
+/* ACTION BUTTONS */
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act-btn{padding:13px 8px;border-radius:8px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.act-btn:active{transform:scale(.97)}
+.act-wa{background:#25D366;color:#fff}
+.act-copy{background:linear-gradient(135deg,var(--gold),#8b6a18);color:var(--dark);font-weight:600}
+.act-btn svg{width:14px;height:14px;flex-shrink:0}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 14px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.stat-num{font-family:'Pinyon Script',cursive;font-size:48px;color:var(--dark);line-height:1;margin-bottom:4px}
+.stat-lbl{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.25em;color:var(--muted)}
+
+/* RSVP LIST */
+.rsvp-section{margin:0 16px}
+.rsvp-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.rsvp-filter-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.15em;color:var(--muted);cursor:pointer;transition:all .2s}
+.rsvp-filter-btn.active{background:var(--dark);color:var(--gold2);border-color:var(--dark)}
+.rsvp-list{display:flex;flex-direction:column;gap:10px}
+.rsvp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 14px;box-shadow:0 1px 8px rgba(0,0,0,.04)}
+.rsvp-name{font-family:'Pinyon Script',cursive;font-size:26px;color:var(--dark);margin-bottom:6px}
+.rsvp-attending{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.15em;margin-bottom:8px}
+.rsvp-attending.yes{background:rgba(39,174,96,.12);color:#27ae60;border:1px solid rgba(39,174,96,.25)}
+.rsvp-attending.no{background:rgba(192,57,43,.1);color:#c0392b;border:1px solid rgba(192,57,43,.2)}
+.rsvp-events{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.rsvp-ev-tag{padding:4px 8px;background:rgba(184,144,42,.1);border:1px solid rgba(184,144,42,.2);border-radius:5px;font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.1em;color:var(--gold)}
+.rsvp-time{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.15em;color:var(--muted);opacity:.6}
+.rsvp-empty{text-align:center;padding:40px 20px;color:var(--muted);font-style:italic;font-size:18px}
+
+/* EXPORT */
+.export-btn{width:calc(100% - 32px);margin:0 16px 16px;padding:14px;background:linear-gradient(135deg,var(--dark2),var(--dark));color:var(--gold2);border:none;border-radius:10px;font-family:'Cinzel',serif;letter-spacing:.28em;font-size:9.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn svg{width:14px;height:14px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark2);color:var(--gold2);padding:11px 20px;border-radius:999px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;border:1px solid rgba(201,169,110,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* DIVIDER */
+.sec-divider{height:1px;background:var(--border);margin:0 16px 16px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-logo">A&A</div>
+  <div class="login-sub">DIGIWED DASHBOARD</div>
+  <div class="login-card">
+    <label class="login-label">ENTER PASSWORD</label>
+    <input class="login-input" id="passInput" type="password" placeholder="••••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">ENTER DASHBOARD</button>
+    <div class="login-err" id="loginErr">Incorrect password</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- HEADER -->
+  <div class="dash-header">
+    <a class="dash-back" href="index.html">← INVITE</a>
+    <div class="dash-couple">Aswin & Athira</div>
+    <div class="dash-title">WEDDING DASHBOARD · APRIL 2027</div>
+  </div>
+
+  <!-- LINK GENERATOR -->
+  <div style="padding:16px 16px 0">
+    <div class="link-section">
+      <div class="sec-title">🔗 PERSONALISED LINK GENERATOR</div>
+
+      <!-- Name -->
+      <div class="name-row">
+        <input class="name-input" id="guestName" placeholder="Guest name…" oninput="buildLink()"/>
+      </div>
+
+      <!-- All Events toggle -->
+      <button class="ev-all-btn" id="allEvBtn" onclick="toggleAll()">✦ ALL EVENTS (A–F)</button>
+
+      <!-- Individual event tabs -->
+      <div class="event-tabs-label">OR SELECT SPECIFIC EVENTS</div>
+      <div class="event-tabs">
+        <button class="ev-tab" data-letter="a" onclick="toggleTab(this)"><span class="ev-letter">A</span>Mylanchi</button>
+        <button class="ev-tab" data-letter="b" onclick="toggleTab(this)"><span class="ev-letter">B</span>Thalennu</button>
+        <button class="ev-tab" data-letter="c" onclick="toggleTab(this)"><span class="ev-letter">C</span>Darshan</button>
+        <button class="ev-tab" data-letter="d" onclick="toggleTab(this)"><span class="ev-letter">D</span>Thalikkettu</button>
+        <button class="ev-tab" data-letter="e" onclick="toggleTab(this)"><span class="ev-letter">E</span>Kalyanam</button>
+        <button class="ev-tab" data-letter="f" onclick="toggleTab(this)"><span class="ev-letter">F</span>Reception</button>
+      </div>
+
+      <!-- Link preview -->
+      <div class="link-preview" id="linkPreview">Enter a guest name to generate link…</div>
+
+      <!-- Actions -->
+      <div class="action-row">
+        <button class="act-btn act-wa" onclick="shareWa()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A12 12 0 003.48 20.52L2 22l1.55-1.45A12 12 0 1020.52 3.48z"/></svg>
+          WHATSAPP
+        </button>
+        <button class="act-btn act-copy" onclick="copyLink()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          COPY LINK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div style="padding:0 16px 0;margin-top:8px">
+    <div class="link-section" style="padding:18px">
+      <div class="sec-title">📊 RSVP OVERVIEW</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotal">—</div>
+          <div class="stat-lbl">TOTAL RSVPs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statYes">—</div>
+          <div class="stat-lbl">ATTENDING</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statGuests">—</div>
+          <div class="stat-lbl">TOTAL GUESTS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RSVP LIST -->
+  <div style="padding:0 16px;margin-top:8px">
+    <div class="link-section">
+      <div class="sec-title">✅ GUEST RESPONSES</div>
+      <!-- Filter -->
+      <div class="rsvp-filter" id="rsvpFilter">
+        <button class="rsvp-filter-btn active" data-filter="all" onclick="setFilter(this)">ALL</button>
+        <button class="rsvp-filter-btn" data-filter="yes" onclick="setFilter(this)">ATTENDING</button>
+        <button class="rsvp-filter-btn" data-filter="no" onclick="setFilter(this)">NOT ATTENDING</button>
+        <button class="rsvp-filter-btn" data-filter="Mylanchi Kalyanam" onclick="setFilter(this)">MYLANCHI</button>
+        <button class="rsvp-filter-btn" data-filter="Kalyana Thalennu" onclick="setFilter(this)">THALENNU</button>
+        <button class="rsvp-filter-btn" data-filter="Guruvayur Darshan" onclick="setFilter(this)">DARSHAN</button>
+        <button class="rsvp-filter-btn" data-filter="Thalikkettu" onclick="setFilter(this)">THALIKKETTU</button>
+        <button class="rsvp-filter-btn" data-filter="Kalyanam" onclick="setFilter(this)">KALYANAM</button>
+        <button class="rsvp-filter-btn" data-filter="Wedding Reception" onclick="setFilter(this)">RECEPTION</button>
+      </div>
+      <div class="rsvp-list" id="rsvpList">
+        <div class="rsvp-empty">Loading responses…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <button class="export-btn" onclick="exportCSV()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    EXPORT ALL RSVPs AS CSV
+  </button>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASSWORD  = 'aswinathira2027';
+const BASE_URL  = 'https://murshid161-sketch.github.io/Aswin_weds_athira/';
+const RSVP_PATH = 'athira-aswin/rsvp';
+
+// Firebase
+const cfg = {
+  apiKey:"AIzaSy841fvxVl1KeHOro6WKJ72o22izuCpJ-b4",
+  authDomain:"yaseen-jumana-wedding.firebaseapp.com",
+  databaseURL:"https://yaseen-jumana-wedding-default-rtdb.firebaseio.com",
+  projectId:"yaseen-jumana-wedding",
+  storageBucket:"yaseen-jumana-wedding.firebasestorage.app",
+  messagingSenderId:"355557621111",
+  appId:"1:355557621111:web:d0b78c34bfe5a53b69f572"
+};
+if(!firebase.apps.length) firebase.initializeApp(cfg);
+const db = firebase.database();
+
+// ── LOGIN ────────────────────────────────────────────────────
+function doLogin(){
+  const val = document.getElementById('passInput').value;
+  if(val === PASSWORD){
+    document.getElementById('loginScreen').classList.add('gone');
+    document.getElementById('main').classList.add('show');
+    loadRsvps();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('passInput').value = '';
+  }
+}
+
+// ── LINK GENERATOR ───────────────────────────────────────────
+let selectedLetters = new Set();
+let allSelected = false;
+
+function toggleAll(){
+  allSelected = !allSelected;
+  const btn = document.getElementById('allEvBtn');
+  btn.classList.toggle('active', allSelected);
+  if(allSelected){
+    selectedLetters.clear();
+    document.querySelectorAll('.ev-tab').forEach(t => t.classList.remove('active'));
+  }
+  buildLink();
+}
+
+function toggleTab(el){
+  allSelected = false;
+  document.getElementById('allEvBtn').classList.remove('active');
+  const letter = el.getAttribute('data-letter');
+  if(selectedLetters.has(letter)){
+    selectedLetters.delete(letter);
+    el.classList.remove('active');
+  } else {
+    selectedLetters.add(letter);
+    el.classList.add('active');
+  }
+  buildLink();
+}
+
+function buildLink(){
+  const name = document.getElementById('guestName').value.trim();
+  const preview = document.getElementById('linkPreview');
+  if(!name){ preview.textContent = 'Enter a guest name to generate link…'; return; }
+
+  let url = BASE_URL + '?guest=' + encodeURIComponent(name);
+  if(allSelected){
+    url += '&events=abcdef';
+  } else if(selectedLetters.size > 0){
+    const letters = ['a','b','c','d','e','f'].filter(l => selectedLetters.has(l)).join('');
+    url += '&events=' + letters;
+  }
+
+  preview.innerHTML = url.replace(BASE_URL, '<span>' + BASE_URL + '</span>');
+  return url;
+}
+
+function getLink(){
+  const name = document.getElementById('guestName').value.trim();
+  if(!name){ showToast('ENTER GUEST NAME FIRST'); return null; }
+  return buildLink();
+}
+
+function copyLink(){
+  const link = getLink();
+  if(!link) return;
+  navigator.clipboard.writeText(link).then(()=>showToast('LINK COPIED ✦')).catch(()=>{
+    const ta = document.createElement('textarea');
+    ta.value = link; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('LINK COPIED ✦');
+  });
+}
+
+function shareWa(){
+  const link = getLink();
+  if(!link) return;
+  const name = document.getElementById('guestName').value.trim();
+  const events = getEventNames();
+  const msg = '🌸 *Aswin & Athira Wedding Invitation*\n\nDear ' + name + ',\n\nYou are warmly invited to join us for our wedding celebrations.\n\n'
+    + (events ? '📅 *Your Events:*\n' + events + '\n\n' : '')
+    + '🔗 *Your Personalised Invite:*\n' + link + '\n\n_With love,_\n_Aswin & Athira_ 🌿';
+  const a = document.createElement('a');
+  a.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  a.target = '_blank';
+  a.click();
+}
+
+function getEventNames(){
+  if(allSelected) return '• All Events (Mylanchi · Thalennu · Darshan · Thalikkettu · Kalyanam · Reception)';
+  if(selectedLetters.size === 0) return '';
+  const map = {
+    'a':'• Mylanchi Kalyanam (Sun, 5 Apr)',
+    'b':'• Kalyana Thalennu (Sun, 5 Apr)',
+    'c':'• Guruvayur Darshan (Mon, 6 Apr)',
+    'd':'• Thalikkettu (Tue, 7 Apr · 5:30 AM)',
+    'e':'• Kalyanam (Tue, 7 Apr · 9:50 AM)',
+    'f':'• Wedding Reception (Fri, 9 Apr · 5 PM)'
+  };
+  return ['a','b','c','d','e','f'].filter(l=>selectedLetters.has(l)).map(l=>map[l]).join('\n');
+}
+
+// ── RSVP ─────────────────────────────────────────────────────
+let allRsvps = [];
+let currentFilter = 'all';
+
+function loadRsvps(){
+  db.ref(RSVP_PATH).on('value', snap => {
+    allRsvps = [];
+    if(snap.exists()){
+      snap.forEach(c => allRsvps.push({key:c.key,...c.val()}));
+      allRsvps.sort((a,b) => (b.ts||0) - (a.ts||0));
+    }
+    updateStats();
+    renderList();
+  });
+}
+
+function updateStats(){
+  const attending = allRsvps.filter(r => r.attending);
+  const totalGuests = attending.reduce((s,r) => s + (r.totalMembers||r.members||1), 0);
+  document.getElementById('statTotal').textContent = allRsvps.length;
+  document.getElementById('statYes').textContent = attending.length;
+  document.getElementById('statGuests').textContent = totalGuests;
+}
+
+function setFilter(btn){
+  currentFilter = btn.getAttribute('data-filter');
+  document.querySelectorAll('.rsvp-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList(){
+  const list = document.getElementById('rsvpList');
+  let filtered = allRsvps;
+  if(currentFilter === 'yes') filtered = allRsvps.filter(r => r.attending);
+  else if(currentFilter === 'no') filtered = allRsvps.filter(r => !r.attending);
+  else if(currentFilter !== 'all') filtered = allRsvps.filter(r => r.attending && r.events && r.events.includes(currentFilter));
+
+  if(filtered.length === 0){
+    list.innerHTML = '<div class="rsvp-empty">No responses yet</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(r => {
+    const evTags = (r.events||[]).map(ev => {
+      const n = (r.eventsDetail&&r.eventsDetail[ev]) || 1;
+      return `<span class="rsvp-ev-tag">${ev} × ${n}</span>`;
+    }).join('');
+    return `<div class="rsvp-card">
+      <div class="rsvp-name">${esc(r.name||'Guest')}</div>
+      <span class="rsvp-attending ${r.attending?'yes':'no'}">${r.attending?'✓ Attending':'✗ Not Attending'}</span>
+      ${evTags ? `<div class="rsvp-events">${evTags}</div>` : ''}
+      <div class="rsvp-time">${r.time||''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── CSV EXPORT ────────────────────────────────────────────────
+function exportCSV(){
+  if(allRsvps.length === 0){ showToast('NO DATA TO EXPORT'); return; }
+  const rows = [['Name','Attending','Events','Total Members','Time']];
+  allRsvps.forEach(r => {
+    rows.push([
+      r.name||'',
+      r.attending ? 'Yes' : 'No',
+      (r.events||[]).join(' | '),
+      r.totalMembers||r.members||'',
+      r.time||''
+    ]);
+  });
+  const csv = rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'aswin-athira-rsvps.csv'; a.click();
+  showToast('CSV EXPORTED ✦');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function esc(s){ const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
+function showToast(m){
+  const t=document.getElementById('toast');
+  t.textContent=m; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
