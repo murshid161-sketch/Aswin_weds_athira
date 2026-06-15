@@ -330,16 +330,16 @@ a{color:inherit;text-decoration:none}
 .vid-section .v-ey{font-family:'Cinzel',serif;letter-spacing:.42em;font-size:9.5px;color:#c9a96e;margin-bottom:14px}
 .vid-section .v-ti{font-family:'DM Serif Display',serif;font-size:clamp(38px,10vw,62px);color:#faf4ec;margin-bottom:10px;line-height:1.1}
 .vid-section .v-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#a08878;margin-bottom:32px}
-/* Player wrapper */
-.v-player-wrap{position:relative;width:100%;max-width:500px;margin:0 auto 28px;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);border:1px solid rgba(201,169,110,.2);background:#111;aspect-ratio:16/9}
-.v-player-wrap video{width:100%;height:100%;display:block;object-fit:contain;background:#000}
+/* Portrait player wrapper */
+.v-player-wrap{position:relative;width:100%;max-width:340px;margin:0 auto 0;border-radius:24px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.7);border:2px solid rgba(201,169,110,.25);background:#000;aspect-ratio:9/16}
+.v-player-wrap video{width:100%;height:100%;display:block;object-fit:cover;background:#000}
 /* Placeholder (no video yet) */
-.v-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#2e1810,#1a0f0a)}
-.v-placeholder-icon{width:56px;height:56px;border-radius:50%;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);display:flex;align-items:center;justify-content:center}
-.v-placeholder-icon svg{width:26px;height:26px;opacity:.4}
-.v-placeholder-txt{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.3em;color:rgba(201,169,110,.4)}
-/* Admin upload zone — overlays placeholder in edit mode */
-.v-upload-zone{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(26,15,10,.88);border:2px dashed rgba(201,169,110,.5);border-radius:16px;cursor:pointer;transition:border-color .2s}
+.v-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(180deg,#2e1810,#1a0f0a)}
+.v-placeholder-icon{width:64px;height:64px;border-radius:50%;background:rgba(201,169,110,.08);border:1px solid rgba(201,169,110,.2);display:flex;align-items:center;justify-content:center}
+.v-placeholder-icon svg{width:30px;height:30px;opacity:.35}
+.v-placeholder-txt{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.3em;color:rgba(201,169,110,.35)}
+/* Admin upload zone */
+.v-upload-zone{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(26,15,10,.9);border:2px dashed rgba(201,169,110,.5);border-radius:22px;cursor:pointer;transition:border-color .2s}
 .v-upload-zone:hover{border-color:#c9a96e}
 .v-upload-zone .v-plus{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#b8902a,#8b6a18);display:flex;align-items:center;justify-content:center;font-size:28px;color:#1e1208;box-shadow:0 4px 16px rgba(184,144,42,.4)}
 .v-upload-zone .v-zone-lbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.25em;color:#c9a96e}
@@ -347,24 +347,35 @@ a{color:inherit;text-decoration:none}
 /* Progress bar */
 .v-prog-wrap{width:75%;height:4px;background:rgba(255,255,255,.1);border-radius:2px;display:none;margin-top:4px}
 .v-prog-fill{height:100%;background:linear-gradient(90deg,#b8902a,#e8c990);border-radius:2px;width:0%;transition:width .25s}
+/* Like bar */
+.v-like-bar{display:flex;align-items:center;justify-content:center;gap:14px;max-width:340px;margin:16px auto 28px;padding:14px 20px;background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.12);border-radius:50px}
+.v-like-btn{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
+.v-like-heart{font-size:26px;line-height:1;transition:transform .2s;display:block;filter:grayscale(1) opacity(.45)}
+.v-like-btn.liked .v-like-heart{filter:none;animation:heartPop .35s ease}
+@keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.45)}70%{transform:scale(.9)}100%{transform:scale(1)}}
+.v-like-count{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;color:#c9a96e;min-width:24px;text-align:left}
+.v-like-sep{width:1px;height:22px;background:rgba(201,169,110,.18)}
+.v-like-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.28em;color:rgba(201,169,110,.45)}
 /* Comments */
-.v-comments{max-width:500px;margin:0 auto}
+.v-comments{max-width:420px;margin:0 auto}
 .v-comments-ey{font-family:'Cinzel',serif;letter-spacing:.32em;font-size:9px;color:#c9a96e;margin-bottom:20px;opacity:.8}
-.v-cmt-form{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:10px;padding:20px 16px;margin-bottom:22px}
-.v-cmt-form input,.v-cmt-form textarea{width:100%;padding:10px 13px;border:1px solid rgba(201,169,110,.2);border-radius:6px;background:rgba(255,255,255,.04);font-family:'Cormorant Garamond',serif;font-size:17px;color:#faf4ec;outline:none;transition:border-color .2s;display:block}
+.v-cmt-form{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:12px;padding:18px 16px;margin-bottom:20px}
+.v-cmt-form input,.v-cmt-form textarea{width:100%;padding:10px 13px;border:1px solid rgba(201,169,110,.2);border-radius:8px;background:rgba(255,255,255,.04);font-family:'Cormorant Garamond',serif;font-size:17px;color:#faf4ec;outline:none;transition:border-color .2s;display:block}
 .v-cmt-form input{margin-bottom:10px}
 .v-cmt-form textarea{min-height:70px;resize:none}
 .v-cmt-form input:focus,.v-cmt-form textarea:focus{border-color:#c9a96e}
 .v-cmt-form input::placeholder,.v-cmt-form textarea::placeholder{color:#a08878}
-.v-cmt-btn{width:100%;padding:12px;background:linear-gradient(135deg,#b8902a,#8b6a18);color:#1e1208;border:none;border-radius:4px;font-family:'Cinzel',serif;letter-spacing:.25em;font-size:9.5px;cursor:pointer;margin-top:10px;font-weight:600;transition:opacity .2s}
+.v-cmt-btn{width:100%;padding:12px;background:linear-gradient(135deg,#b8902a,#8b6a18);color:#1e1208;border:none;border-radius:8px;font-family:'Cinzel',serif;letter-spacing:.25em;font-size:9.5px;cursor:pointer;margin-top:10px;font-weight:600;transition:opacity .2s}
 .v-cmt-btn:disabled{opacity:.5;cursor:not-allowed}
 .v-cmt-list{display:flex;flex-direction:column;gap:10px}
-.v-cmt-card{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.12);border-radius:10px;padding:14px 16px;text-align:left}
-.v-cmt-name{font-family:'DM Serif Display',serif;font-size:22px;color:#c9a96e;margin-bottom:4px}
-.v-cmt-text{font-size:16px;color:#a08878;font-style:italic;line-height:1.65}
-.v-cmt-time{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.2em;color:#a08878;opacity:.45;margin-top:8px}
+.v-cmt-card{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.1);border-radius:12px;padding:14px 16px;text-align:left}
+.v-cmt-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.v-cmt-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#b8902a,#8b6a18);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:16px;color:#1e1208;flex-shrink:0}
+.v-cmt-name{font-family:'DM Serif Display',serif;font-size:19px;color:#c9a96e;line-height:1}
+.v-cmt-time{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.18em;color:#a08878;opacity:.45;margin-top:2px}
+.v-cmt-text{font-size:15.5px;color:#a08878;font-style:italic;line-height:1.65}
 .v-loadmore-wrap{text-align:center;margin-top:16px;display:none}
-.v-loadmore-btn{padding:10px 28px;background:transparent;border:1px solid rgba(201,169,110,.25);border-radius:4px;font-family:'Cinzel',serif;letter-spacing:.2em;font-size:9px;color:#c9a96e;cursor:pointer}
+.v-loadmore-btn{padding:10px 28px;background:transparent;border:1px solid rgba(201,169,110,.25);border-radius:999px;font-family:'Cinzel',serif;letter-spacing:.2em;font-size:9px;color:#c9a96e;cursor:pointer}
 
 
 /* DELETE IMAGE BUTTON */
@@ -585,12 +596,22 @@ a{color:inherit;text-decoration:none}
 
     </div><!-- /v-player-wrap -->
 
+    <!-- Like bar -->
+    <div class="v-like-bar">
+      <button class="v-like-btn" id="vLikeBtn" onclick="vToggleLike()">
+        <span class="v-like-heart">❤️</span>
+      </button>
+      <span class="v-like-count" id="vLikeCount">0</span>
+      <div class="v-like-sep"></div>
+      <span class="v-like-label">LOVES</span>
+    </div>
+
     <!-- Comments -->
     <div class="v-comments">
-      <div class="v-comments-ey">— LEAVE A COMMENT —</div>
+      <div class="v-comments-ey">— SHARE YOUR THOUGHTS —</div>
       <div class="v-cmt-form">
         <input type="text" id="vCmtName" placeholder="Your name"/>
-        <textarea id="vCmtText" placeholder="Share your thoughts after watching…"></textarea>
+        <textarea id="vCmtText" placeholder="Write something beautiful…"></textarea>
         <button class="v-cmt-btn" id="vCmtBtn" onclick="vSubmitComment()">POST COMMENT ✦</button>
       </div>
       <div class="v-cmt-list" id="vCmtList"></div>
@@ -1183,6 +1204,7 @@ function openInvite(){
   initGallery();
   vLoadFromFirebase();
   vLoadComments(false);
+  vLoadLikes();
 
 }
 document.body.style.overflow = 'hidden';
@@ -1645,11 +1667,13 @@ function loadBgmFromFirebase(){
 }
 
 // ── VIDEO ───────────────────────────────────────────────────────────────────
-var V_PATH     = 'athira-aswin/video';
-var V_CMT_PATH = 'athira-aswin-v1/vidcomments';
-var V_PAGE     = 6;
-var vLastKey   = null;
-var vRecentTs  = null;
+var V_PATH      = 'athira-aswin/video';
+var V_CMT_PATH  = 'athira-aswin-v1/vidcomments';
+var V_LIKE_PATH = 'athira-aswin/video-likes';
+var V_PAGE      = 6;
+var vLastKey    = null;
+var vRecentTs   = null;
+var vLiked      = !!localStorage.getItem('aa27_liked');
 var vUploadDone = false;
 var vUploadUrl  = '';
 
@@ -1800,11 +1824,15 @@ function vLoadComments(append){
     if(items.length) vLastKey = items[items.length - 1].key;
     if(!append && list) list.innerHTML = '';
     items.forEach(function(c){
+      var initial = esc((c.name||'?')[0].toUpperCase());
       if(list) list.insertAdjacentHTML('beforeend',
         '<div class="v-cmt-card">'
-        + '<div class="v-cmt-name">' + esc(c.name) + '</div>'
+        + '<div class="v-cmt-header">'
+        + '<div class="v-cmt-avatar">' + initial + '</div>'
+        + '<div><div class="v-cmt-name">' + esc(c.name) + '</div>'
+        + '<div class="v-cmt-time">' + (c.time||'') + '</div></div>'
+        + '</div>'
         + '<div class="v-cmt-text">' + esc(c.text) + '</div>'
-        + '<div class="v-cmt-time">' + (c.time||'') + '</div>'
         + '</div>'
       );
     });
@@ -1814,6 +1842,41 @@ function vLoadComments(append){
 }
 
 
+
+// ── VIDEO LIKES ───────────────────────────────────────────────────────────────
+function vLoadLikes(){
+  if(!db) return;
+  var btn = document.getElementById('vLikeBtn');
+  if(btn && vLiked) btn.classList.add('liked');
+  db.ref(V_LIKE_PATH).on('value', function(snap){
+    var count = (snap.exists() && snap.val() && snap.val().count) ? snap.val().count : 0;
+    var el = document.getElementById('vLikeCount');
+    if(el) el.textContent = count;
+  });
+}
+
+function vToggleLike(){
+  var btn = document.getElementById('vLikeBtn');
+  if(!btn) return;
+  if(vLiked){
+    // Unlike
+    vLiked = false;
+    localStorage.removeItem('aa27_liked');
+    btn.classList.remove('liked');
+    if(db) db.ref(V_LIKE_PATH).transaction(function(cur){
+      var n = (cur && cur.count) ? cur.count - 1 : 0;
+      return {count: Math.max(0, n)};
+    });
+  } else {
+    // Like
+    vLiked = true;
+    localStorage.setItem('aa27_liked', '1');
+    btn.classList.add('liked');
+    if(db) db.ref(V_LIKE_PATH).transaction(function(cur){
+      return {count: ((cur && cur.count) ? cur.count : 0) + 1};
+    });
+  }
+}
 
 // ── DELETE IMAGE ─────────────────────────────────────────────────────────────
 function deleteSlotImage(slotKey, btnEl){
