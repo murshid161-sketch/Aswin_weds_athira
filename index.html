@@ -478,9 +478,9 @@ a{color:inherit;text-decoration:none}
   <div class="landing-dear" id="landingDear" style="display:none">Dear</div>
   <div class="landing-guest" id="landingGuest"></div>
   <div class="landing-names-wrap">
-    <span class="landing-name1">Aswin</span>
+    <span class="landing-name1"><span class="shine">Aswin</span></span>
     <span class="landing-amp">&amp;</span>
-    <span class="landing-name2">Athira</span>
+    <span class="landing-name2"><span class="shine">Athira</span></span>
   </div>
   <div class="landing-date">7 · APRIL · 2027</div>
   <div class="landing-venue-sub">Guruvayur Sree Krishna Temple, Guruvayur</div>
@@ -503,7 +503,7 @@ a{color:inherit;text-decoration:none}
     <div class="hero-eyebrow">✦ WITH THE BLESSINGS OF ALMIGHTY GOD ✦</div>
     <div class="hero-personal" id="heroPersonal"></div>
     <div class="hero-invite">You are warmly invited to celebrate</div>
-    <div class="hero-names">Aswin<span class="amp">&amp;</span>Athira</div>
+    <div class="hero-names"><span class="shine">Aswin</span><span class="amp">&amp;</span><span class="shine">Athira</span></div>
     <div class="hero-date-bar">7 · APRIL · 2027</div>
   </div>
 </section>
@@ -1545,6 +1545,28 @@ a{color:inherit;text-decoration:none}
 .fam-role-late{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.28em;color:#8a7060;opacity:.85}
 .fam-side-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.28em;color:#b8902a;opacity:.6;margin-bottom:8px;text-align:left;padding:0 4px}
 
+/* ── SHINE SWEEP ─────────────────────────────────────────────────────────── */
+@keyframes shine-sweep{0%{background-position:200% center}100%{background-position:-200% center}}
+.shine{
+  display:inline-block;
+  background:linear-gradient(90deg,#faf4ec 25%,#c9a96e 40%,#fdefc3 50%,#c9a96e 60%,#faf4ec 75%);
+  background-size:250% auto;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shine-sweep 5s linear infinite;
+}
+.hero-names .shine{
+  background:linear-gradient(90deg,#e8d0a0 20%,#c9a96e 38%,#fdf0c0 50%,#c9a96e 62%,#e8d0a0 80%);
+  background-size:250% auto;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shine-sweep 5s linear infinite;
+}
+
+/* ── GLITTER + DUST CANVAS ───────────────────────────────────────────────── */
+#glitter-canvas{position:fixed;inset:0;pointer-events:none;z-index:9999}
+#dust-canvas{position:fixed;inset:0;pointer-events:none;z-index:1}
+
 </style>
 </head>
 <body>
@@ -1569,6 +1591,9 @@ a{color:inherit;text-decoration:none}
 
 
 <div class="toast" id="toast"></div>
+
+<canvas id="glitter-canvas"></canvas>
+<canvas id="dust-canvas"></canvas>
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────────────
@@ -2679,6 +2704,86 @@ function showToast(m){
   t.textContent=m; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
+
+// ── TOUCH / CLICK GLITTER BURST ────────────────────────────────────────────
+(function(){
+  const canvas=document.getElementById('glitter-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let particles=[];
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  function spawnBurst(x,y){
+    const cols=['#c9a96e','#faf4ec','#e8c9a0','#b8902a','#fdefc3','#f5ede0'];
+    for(let i=0;i<18;i++){
+      const a=Math.random()*Math.PI*2;
+      const sp=1.8+Math.random()*3.8;
+      const shape=Math.floor(Math.random()*3);
+      particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.2,
+        size:2.5+Math.random()*4,color:cols[Math.floor(Math.random()*cols.length)],
+        alpha:1,decay:0.022+Math.random()*0.018,gravity:0.07,shape});
+    }
+    if(!rafRunning)animate();
+  }
+  let rafRunning=false;
+  function animate(){
+    rafRunning=true;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles=particles.filter(p=>p.alpha>0.01);
+    for(const p of particles){
+      p.x+=p.vx;p.y+=p.vy;p.vy+=p.gravity;p.alpha-=p.decay;
+      ctx.globalAlpha=Math.max(0,p.alpha);
+      ctx.fillStyle=p.color;
+      if(p.shape===0){ctx.beginPath();ctx.arc(p.x,p.y,p.size/2,0,Math.PI*2);ctx.fill();}
+      else if(p.shape===1){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(Math.PI/4);ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);ctx.restore();}
+      else{ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);}
+    }
+    ctx.globalAlpha=1;
+    if(particles.length>0)requestAnimationFrame(animate);else rafRunning=false;
+  }
+  let lastTap=0;
+  document.addEventListener('click',e=>{const now=Date.now();if(now-lastTap>80){spawnBurst(e.clientX,e.clientY);lastTap=now;}});
+  document.addEventListener('touchstart',e=>{for(const t of e.touches)spawnBurst(t.clientX,t.clientY);},{passive:true});
+})();
+
+// ── GOLD DUST BACKGROUND ──────────────────────────────────────────────────
+(function(){
+  const canvas=document.getElementById('dust-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const N=60;
+  let motes=[];
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',()=>{resize();init();});
+  function init(){
+    motes=[];
+    for(let i=0;i<N;i++){
+      motes.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+        r:0.7+Math.random()*1.3,phase:Math.random()*Math.PI*2,
+        speed:0.003+Math.random()*0.004,drift:(Math.random()-.5)*0.12,rise:0.08+Math.random()*0.18});
+    }
+  }
+  init();
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const m of motes){
+      const alpha=0.1+0.09*Math.sin(m.phase+t*m.speed*80);
+      ctx.globalAlpha=Math.max(0,alpha);
+      ctx.fillStyle='#b8902a';
+      ctx.beginPath();ctx.arc(m.x,m.y,m.r,0,Math.PI*2);ctx.fill();
+      m.x+=m.drift;m.y-=m.rise*0.3;
+      if(m.y<-4)m.y=canvas.height+4;
+      if(m.x<-4)m.x=canvas.width+4;
+      if(m.x>canvas.width+4)m.x=-4;
+    }
+    ctx.globalAlpha=1;t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
 </body>
 </html>
